@@ -14,15 +14,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class VerificationService {
 
-    // Kullanıcı ismi veya ID ile kodları ilişkilendirebiliriz
+	// We can associate codes with username or ID
     private Map<String, VerificationCode> verificationCodes = new ConcurrentHashMap<>();
 
-    // Doğrulama kodunu sakla (username ile ilişkilendirerek)
+    // Store the verification code (associated with the username)
     public void storeVerificationCode(String username, String code) {
         verificationCodes.put(username, new VerificationCode(code, LocalDateTime.now().plusMinutes(2)));
     }
 
-    // Doğrulama kodunu kontrol et (username ile doğrulama yap)
+    // Check the verification code (verify with username)
     public boolean isCodeValid(String username, String code) {
         VerificationCode verificationCode = verificationCodes.get(username);
 
@@ -30,7 +30,7 @@ public class VerificationService {
             return false;
         }
 
-        // Kodun süresi dolmuşsa sil ve geçersiz say
+        // If the code is expired, delete it and consider it invalid
         if (verificationCode.getExpiryTime().isBefore(LocalDateTime.now())) {
             verificationCodes.remove(username);
             return false;
@@ -58,10 +58,10 @@ public class VerificationService {
     }
     
     public String getUsernameFromCode(String code) {
-        // Kodun doğrulanması için gerekli işlemler
+    	// Necessary operations for verification of the code
         for (Map.Entry<String, VerificationCode> entry : verificationCodes.entrySet()) {
             if (entry.getValue().getCode().equals(code) && entry.getValue().getExpiryTime().isAfter(LocalDateTime.now())) {
-                return entry.getKey(); // username'i döndür
+                return entry.getKey(); // return username
             }
         }
         return null;

@@ -29,20 +29,20 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-    // JWT Token oluşturma (Cihaz bilgisi ile)
+    // Create JWT Token (With device information)
     public String generateJwtTokenWithDevice(Authentication authentication, String deviceInfo) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
-                .claim("deviceInfo", deviceInfo) // Cihaz bilgisini ekliyoruz
+                .claim("deviceInfo", deviceInfo) // We add device information
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(Instant.now().plusMillis(jwtExpirationMs)))
                 .signWith(getSigningKey())
                 .compact();
     }
 
-    // JWT içinden cihaz bilgisini alma
+    // Getting device information from JWT
     public String getDeviceInfoFromJwtToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -52,7 +52,7 @@ public class JwtUtils {
         return claims.get("deviceInfo", String.class);
     }
 
-    // JWT içinden kullanıcı adını alma
+    // Getting the username from the JWT
     public String getUserNameFromJwtToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -62,18 +62,18 @@ public class JwtUtils {
         return claims.getSubject();
     }
 
-    // JWT doğrulama ve cihaz bilgisi kontrolü
+    // JWT validation and device information check
     public boolean validateJwtToken(String authToken, String currentDeviceInfo) {
         try {
             String tokenDeviceInfo = getDeviceInfoFromJwtToken(authToken);
             if (!tokenDeviceInfo.equals(currentDeviceInfo)) {
-                // Cihaz bilgisi uyuşmuyorsa token geçersiz
+            	// If the device information does not match, the token is invalid.
                 return false;
             }
             Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(authToken);
             return true;
         } catch (Exception e) {
-            // Hata loglama işlemleri burada yapılabilir
+        	// Error logging operations can be done here
             return false;
         }
     }

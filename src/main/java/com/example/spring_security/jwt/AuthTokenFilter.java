@@ -32,7 +32,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         try {
-            // Çerezden JWT'yi al
+        	// Get JWT from cookie
             Cookie[] cookies = request.getCookies();
             String jwt = null;
 
@@ -45,7 +45,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 }
             }
 
-            // Mevcut cihaz bilgisi (User-Agent)
+            // Current device information (User-Agent)
             String currentDeviceInfo = request.getHeader("User-Agent");
 
             if (jwt != null && jwtUtils.validateJwtToken(jwt, currentDeviceInfo)) {

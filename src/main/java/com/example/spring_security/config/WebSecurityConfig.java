@@ -12,7 +12,7 @@ import org.springframework.http.HttpMethod;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
@@ -30,6 +30,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
     
     @Autowired
@@ -55,24 +56,24 @@ public class WebSecurityConfig {
             )
             .csrf(csrf -> csrf.disable())
             
-            // Yetkilendirme ve yetkisiz erişim ayarları
+            // Authorization and unauthorized access settings
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint(unauthorizedHandler)
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/signin").permitAll() // herkese açık erişim
-                .requestMatchers("/api/auth/signup").permitAll() // herkese açık erişim
-                .requestMatchers("/api/auth/logout").permitAll() // herkese açık erişim
-                .requestMatchers("/api/auth/verify-code").permitAll() // herkese açık erişim
-                .requestMatchers("/api/auth/resend-code").permitAll() // herkese açık erişim
-                .requestMatchers("/api/auth/check-auth").permitAll() // herkese açık erişim
-                .requestMatchers("/api/gizli-musteri/kaydet").permitAll() // Gizli müşteri kaydetme endpoint'ine herkese açık erişim 
-                .requestMatchers("/api/gizliMusteriWord/downloadZip").permitAll() // herkese açık erişim
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // OPTIONS isteklerine izin ver
-                .anyRequest().authenticated() // Diğer tüm istekler kimlik doğrulaması gerektirir
+            	.requestMatchers("/api/test/all").permitAll() // public access
+            	.requestMatchers("/api/auth/signin").permitAll() // public access
+                .requestMatchers("/api/auth/signin").permitAll() // public access
+                .requestMatchers("/api/auth/signup").permitAll() // public access
+                .requestMatchers("/api/auth/logout").permitAll() // public access
+                .requestMatchers("/api/auth/verify-code").permitAll() // public access
+                .requestMatchers("/api/auth/resend-code").permitAll() // public access
+                .requestMatchers("/api/auth/check-auth").permitAll() // public access
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow OPTIONS requests
+                .anyRequest().authenticated() // All other requests require authentication
             );
 
-        // Filtrelerin sıralaması
+        // Sorting of filters
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -87,7 +88,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173")); // Frontend adreslerinizi buraya ekleyin
+        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Add your Frontend addresses here
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);

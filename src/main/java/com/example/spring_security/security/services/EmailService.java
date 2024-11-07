@@ -34,7 +34,7 @@ public class EmailService {
 
     private String generateVerificationCode() {
         Random random = new Random();
-        int code = 100000 + random.nextInt(900000); // 6 haneli rastgele bir sayı
+        int code = 100000 + random.nextInt(900000); // A random 6 digit number
         return String.valueOf(code);
     }
 }

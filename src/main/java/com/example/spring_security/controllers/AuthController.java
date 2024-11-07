@@ -55,7 +55,7 @@ public class AuthController {
     private final RoleRepository roleRepository;
 
     @Autowired
-    private UserDetailsServiceImpl userDetailsService; // Kullanıcıyı username ile doğrulamak için
+    private UserDetailsServiceImpl userDetailsService; // To authenticate the user with username
 
     @Autowired
     UserRepository userRepository;
@@ -66,7 +66,7 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
-    // Kullanıcı başına bucket'ları tutacak bir harita
+    // A map to hold buckets per user
     private final Map<String, Bucket> bucketCache = new ConcurrentHashMap<>();
 
     @Autowired
@@ -78,15 +78,15 @@ public class AuthController {
         this.emailService = emailService;
     }
 
-    // Her kullanıcı için rate limit belirleyen bir metot
+    // A method that sets rate limits for each user
     private Bucket resolveBucket(String username) {
         return bucketCache.computeIfAbsent(username, key -> createNewBucket());
     }
 
     private Bucket createNewBucket() {
-        Refill refill = Refill.intervally(5, Duration.ofMinutes(10)); // 10 dakikada 5 istek
-        Bandwidth limit = Bandwidth.classic(5, refill); // Bandwidth limiti belirler
-        return Bucket.builder().addLimit(limit).build(); // Yeni bir bucket oluşturur
+        Refill refill = Refill.intervally(5, Duration.ofMinutes(10)); // 5 requests in 10 minutes
+        Bandwidth limit = Bandwidth.classic(5, refill); // Sets the bandwidth limit
+        return Bucket.builder().addLimit(limit).build(); // Creates a new bucket
     }
 
     @PostMapping("/signup")
@@ -127,17 +127,17 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("JWT cookie is missing or already logged out");
         }
 
-        // Token'ı kara listeye ekleyelim
+        // Let's add the token to the blacklist
         tokenBlackListService.add(token);
 
-        // Çerezi temizle (Max-Age=0 ile çerezi sil)
+        // Clear cookie (delete cookie with Max-Age=0)
         String cookie;
-        String env = System.getenv("SPRING_PROFILES_ACTIVE"); // Ortam değişkenini kontrol et
+        String env = System.getenv("SPRING_PROFILES_ACTIVE"); // Check environment variable
         if ("prod".equals(env)) {
-            // Üretim ortamı için Secure ve SameSite=None
+        	// Secure and SameSite=None for production environment
             cookie = "jwt=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0";
         } else {
-            // Geliştirme ortamı için Secure=false ve SameSite=Lax
+        	// For development environment Secure=false and SameSite=Lax
             cookie = "jwt=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0";
         }
 
@@ -148,36 +148,36 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody SigninRequest signinRequest, @RequestHeader("User-Agent") String userAgent) {
-        // Rate Limiting kontrolü
+    	// Rate Limiting control
         Bucket bucket = resolveBucket(signinRequest.getUsername());
-        if (bucket.tryConsume(1)) { // 1 hak tüketmeye çalış
+        if (bucket.tryConsume(1)) { // Try to use up 1 right
             try {
-                // Kullanıcıyı authenticate et
+            	// Authenticate the user
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(signinRequest.getUsername(), signinRequest.getPassword())
                 );
 
-                // Güvenlik bağlamına authentication ekle
+                // Add authentication to security context
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                // Kullanıcı detaylarını al
+                // Get user details
                 UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-                // Doğrulama kodu oluştur ve e-posta ile gönder
+                // Generate verification code and send via email
                 String verificationCode = emailService.sendVerificationCode(userDetails.getEmail());
                 if (verificationCode == null) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body(new MessageResponse("Error: Verification code could not be sent."));
                 }
 
-                // Doğrulama kodunu sakla
+                // Save verification code
                 verificationService.storeVerificationCode(userDetails.getUsername(), verificationCode);
 
-                // Başarılı yanıt döndür
+                // Return successful response
                 return ResponseEntity.ok(new MessageResponse("Signin successful and verification code sent to email."));
 
             } catch (Exception e) {
-                // Hata durumunda uygun yanıt döndür
+                // Return appropriate response on error
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(new MessageResponse("Error: Invalid username or password."));
             }
@@ -199,17 +199,17 @@ public class AuthController {
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // JWT token oluştur (cihaz bilgisi ile)
+     // Create JWT token (with device information)
         String jwt = jwtUtils.generateJwtTokenWithDevice(authentication, userAgent);
 
-        // Çerez ayarları
-        String env = System.getenv("SPRING_PROFILES_ACTIVE"); // Ortam değişkeni ile ortamı kontrol edin
+        // Cookie settings
+        String env = System.getenv("SPRING_PROFILES_ACTIVE"); // Control the environment with environment variables
         String cookie;
         if ("prod".equals(env)) {
-            // Üretim ortamı için
+        	// For production environment
             cookie = String.format("jwt=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d", jwt, 4 * 60 * 60);
         } else {
-            // Geliştirme ortamı için
+        	// For development environment
             cookie = String.format("jwt=%s; HttpOnly; SameSite=Lax; Path=/; Max-Age=%d", jwt, 4 * 60 * 60);
         }
 
@@ -220,9 +220,9 @@ public class AuthController {
 
     @PostMapping("/resend-code")
     public ResponseEntity<?> resendVerificationCode(@RequestBody ResendCodeRequest resendCodeRequest) {
-        // Rate Limiting kontrolü
+    	// Rate Limiting control
         Bucket bucket = resolveBucket(resendCodeRequest.getUsername());
-        if (bucket.tryConsume(1)) { // 1 hak tüketmeye çalış
+        if (bucket.tryConsume(1)) { // Try to use up 1 right
             String username = resendCodeRequest.getUsername();
             UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
 
@@ -233,7 +233,7 @@ public class AuthController {
             String newVerificationCode = emailService.sendVerificationCode(userDetails.getEmail());
             verificationService.storeVerificationCode(username, newVerificationCode);
 
-            return ResponseEntity.ok(new MessageResponse("Yeni doğrulama kodu gönderildi."));
+            return ResponseEntity.ok(new MessageResponse("New verification code has been sent."));
         } else {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
                     .body(new MessageResponse("Error: Too many resend attempts. Please try again later."));

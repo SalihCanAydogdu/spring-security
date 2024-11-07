@@ -3,6 +3,8 @@ package com.example.spring_security.security.repository;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.spring_security.models.User;
@@ -15,8 +17,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Boolean existsByEmail(String email);
   
-  //Sadece email alanını geri döndür
+  //Return only the mail field
   User findById(long id);
-  
+  @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u JOIN u.roles r WHERE u.id = :userId AND r.id = :roleId")
+  boolean existsByUserIdAndRoleId(@Param("userId") long userId, @Param("roleId") Integer roleId);
+
+
   
 }
