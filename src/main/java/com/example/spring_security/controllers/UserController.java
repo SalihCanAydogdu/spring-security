@@ -33,7 +33,6 @@ public class UserController {
 	
 	
 	@GetMapping
-	//@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public List<UserResponse> getAllUsers(){
 		return userService.getAllUsers().stream().map(u -> new UserResponse(u)).toList();
 	}

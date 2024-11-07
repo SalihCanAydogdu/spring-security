@@ -248,7 +248,7 @@ public class AuthController {
         }
 
         try {
-            // Token doğrulama
+        	// Token verification
             if (jwtUtils.validateJwtToken(token, userAgent)) {
                 String username = jwtUtils.getUserNameFromJwtToken(token);
                 UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
