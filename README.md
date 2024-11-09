@@ -26,14 +26,53 @@ This project is configured with the above versions. You can refer to the followi
 - **Compatible Versions:** MySQL versions between `8.0.20` and `8.1.x` are compatible with this project and meet current security standards.
 - **Not Recommended:** `MySQL 5.x` and earlier versions may cause issues with some SQL queries and data types used in this project. MySQL `8.2.x` and above might require configuration adjustments not included here.
 
-## Key Features
+## Email Configuration
+
+This project uses Gmail's SMTP server for email notifications. To configure email sending in your application, update the following properties in the `application.properties` file:
+
+![Email Configuration](application.password.png)
+
+- **spring.mail.host**: `smtp.gmail.com`
+- **spring.mail.port**: `587`
+- **spring.mail.username**: Your Gmail email address (e.g., `your-email@gmail.com`)
+- **spring.mail.password**: An application-specific password generated from your Google account security settings.
+
+> **Note**: For detailed instructions on setting up an application-specific password for Gmail, you can refer to [this video](https://www.youtube.com/watch?v=3vINS4tzjIw&list=LL&index=2). This video provides step-by-step guidance on enabling two-factor authentication and generating an application-specific password.
+
+#### Daily Email Limits
+- **Personal Gmail Accounts**: Gmail has a daily limit of **500 emails**. This limit may affect applications sending a high volume of emails.
+- **Corporate Gmail Accounts**: G Suite (Google Workspace) accounts generally have a higher daily email limit, allowing for **up to 2,000 emails** per day, depending on the subscription level.
+
+> **Reminder**: Ensure that you have enabled two-factor authentication in your Google account, as generating an application-specific password requires it.
+
+## Database Configuration
+
+After setting up the project, you need to configure the `roles` table in the database with the following entries:
+
+![Roles Table](roles.png)
+
+- `ROLE_USER`
+- `ROLE_MODERATOR`
+- `ROLE_ADMIN`
+
+You can insert these roles by running the following SQL query:
+
+```sql
+INSERT INTO roles (id, name) VALUES
+(1, 'ROLE_USER'),
+(2, 'ROLE_MODERATOR'),
+(3, 'ROLE_ADMIN');
+```
+This setup is essential for role-based access control within the application. If the roles are missing, certain functionalities may not work as expected.
+
+# Key Features
 - **Security:** JWT-based authentication and role-based access control.
-- **Endpoint Protection:** `@PreAuthorize` annotations manage sensitive access at the API level.
+- **Endpoint Protection:** @PreAuthorize annotations manage sensitive access at the API level.
 - **Token Management:** JWT tokens and user roles are stored in cookies for enhanced security.
 - **Code Readability:** Extensive comments are added throughout the code to facilitate understanding and maintainability.
 
-## Contributing
+# Contributing
 I aimed to make this project as user-friendly and understandable as possible. If you notice any inconsistencies, have suggestions, or want to contribute, please feel free to reach out.
 
-## Contact
-For questions, feedback, or contribution requests, contact me at: **[salih.aydogdu.tech@gmail.com](mailto:salih.aydogdu.tech@gmail.com)**
+# Contact
+For questions, feedback, or contribution requests, contact me at: salih.aydogdu.tech@gmail.com
