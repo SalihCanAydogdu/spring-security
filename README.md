@@ -30,22 +30,34 @@ This project is configured with the above versions. You can refer to the followi
 
 This project uses Gmail's SMTP server for email notifications. To configure email sending in your application, update the following properties in the `application.properties` file:
 
-```properties
-spring.mail.host=smtp.gmail.com
-spring.mail.port=587
-spring.mail.username=your-email@gmail.com
-spring.mail.password=your-application-password
-Note: For detailed instructions on setting up an application-specific password for Gmail, refer to this video. This video provides step-by-step guidance on enabling two-factor authentication and generating an application-specific password.
-Daily Email Limits
-Personal Gmail Accounts: Gmail has a daily limit of 500 emails. This limit may affect applications sending a high volume of emails.
-Corporate Gmail Accounts: G Suite (Google Workspace) accounts generally have a higher daily email limit, allowing for up to 2,000 emails per day, depending on the subscription level.
-Reminder: Ensure that you have enabled two-factor authentication in your Google account, as generating an application-specific password requires it.
+![Email Configuration](application.password.png)
 
-Database Configuration
-After setting up the project, you need to configure the roles table in the database with the following entries:
+- **spring.mail.host**: `smtp.gmail.com`
+- **spring.mail.port**: `587`
+- **spring.mail.username**: Your Gmail email address (e.g., `your-email@gmail.com`)
+- **spring.mail.password**: An application-specific password generated from your Google account security settings.
 
-sql
-Kodu kopyala
+> **Note**: For detailed instructions on setting up an application-specific password for Gmail, you can refer to [this video](https://www.youtube.com/watch?v=3vINS4tzjIw&list=LL&index=2). This video provides step-by-step guidance on enabling two-factor authentication and generating an application-specific password.
+
+#### Daily Email Limits
+- **Personal Gmail Accounts**: Gmail has a daily limit of **500 emails**. This limit may affect applications sending a high volume of emails.
+- **Corporate Gmail Accounts**: G Suite (Google Workspace) accounts generally have a higher daily email limit, allowing for **up to 2,000 emails** per day, depending on the subscription level.
+
+> **Reminder**: Ensure that you have enabled two-factor authentication in your Google account, as generating an application-specific password requires it.
+
+## Database Configuration
+
+After setting up the project, you need to configure the `roles` table in the database with the following entries:
+
+![Roles Table](roles.png)
+
+- `ROLE_USER`
+- `ROLE_MODERATOR`
+- `ROLE_ADMIN`
+
+You can insert these roles by running the following SQL query:
+
+```sql
 INSERT INTO roles (id, name) VALUES
 (1, 'ROLE_USER'),
 (2, 'ROLE_MODERATOR'),
@@ -61,4 +73,4 @@ Contributing
 I aimed to make this project as user-friendly and understandable as possible. If you notice any inconsistencies, have suggestions, or want to contribute, please feel free to reach out.
 
 Contact
-For questions, feedback, or contribution requests, contact me at: salih.aydogdu.tech@gmail.com
+For questions, feedback, or contribution requests, contact me at: salih.aydogdu.tech@gmail.co
