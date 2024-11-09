@@ -3,6 +3,7 @@ package com.example.spring_security.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +23,7 @@ import com.example.spring_security.security.services.UserService;
 @RequestMapping("/api/users")
 public class UserController {
 
-	
+
 	private UserService userService ;
 	
 	
@@ -31,6 +32,8 @@ public class UserController {
 		this.userService=userService;
 	}
 	
+	// @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	// You can use Preauthorize to distribute roles according to the needs of your project.
 	
 	@GetMapping
 	public List<UserResponse> getAllUsers(){
