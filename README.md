@@ -62,5 +62,15 @@ INSERT INTO roles (id, name) VALUES
 (1, 'ROLE_USER'),
 (2, 'ROLE_MODERATOR'),
 (3, 'ROLE_ADMIN');
+This setup is essential for role-based access control within the application. If the roles are missing, certain functionalities may not work as expected.
 
+Key Features
+Security: JWT-based authentication and role-based access control.
+Endpoint Protection: @PreAuthorize annotations manage sensitive access at the API level.
+Token Management: JWT tokens and user roles are stored in cookies for enhanced security.
+Code Readability: Extensive comments are added throughout the code to facilitate understanding and maintainability.
+Contributing
+I aimed to make this project as user-friendly and understandable as possible. If you notice any inconsistencies, have suggestions, or want to contribute, please feel free to reach out.
 
+Contact
+For questions, feedback, or contribution requests, contact me at: salih.aydogdu.tech@gmail.com
