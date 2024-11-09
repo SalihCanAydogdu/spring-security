@@ -62,6 +62,7 @@ INSERT INTO roles (id, name) VALUES
 (1, 'ROLE_USER'),
 (2, 'ROLE_MODERATOR'),
 (3, 'ROLE_ADMIN');
+```
 This setup is essential for role-based access control within the application. If the roles are missing, certain functionalities may not work as expected.
 
 Key Features
