@@ -26,14 +26,20 @@ This project is configured with the above versions. You can refer to the followi
 - **Compatible Versions:** MySQL versions between `8.0.20` and `8.1.x` are compatible with this project and meet current security standards.
 - **Not Recommended:** `MySQL 5.x` and earlier versions may cause issues with some SQL queries and data types used in this project. MySQL `8.2.x` and above might require configuration adjustments not included here.
 
-## Key Features
-- **Security:** JWT-based authentication and role-based access control.
-- **Endpoint Protection:** `@PreAuthorize` annotations manage sensitive access at the API level.
-- **Token Management:** JWT tokens and user roles are stored in cookies for enhanced security.
-- **Code Readability:** Extensive comments are added throughout the code to facilitate understanding and maintainability.
+## Database Configuration
 
-## Contributing
-I aimed to make this project as user-friendly and understandable as possible. If you notice any inconsistencies, have suggestions, or want to contribute, please feel free to reach out.
+After setting up the project, you need to configure the `roles` table in the database with the following entries:
 
-## Contact
-For questions, feedback, or contribution requests, contact me at: **[salih.aydogdu.tech@gmail.com](mailto:salih.aydogdu.tech@gmail.com)**
+![Roles Table](roles.png)
+
+- `ROLE_USER`
+- `ROLE_MODERATOR`
+- `ROLE_ADMIN`
+
+You can insert these roles by running the following SQL query:
+
+```sql
+INSERT INTO roles (id, name) VALUES
+(1, 'ROLE_USER'),
+(2, 'ROLE_MODERATOR'),
+(3, 'ROLE_ADMIN');
