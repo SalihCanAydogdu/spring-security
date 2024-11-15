@@ -75,4 +75,4 @@ This setup is essential for role-based access control within the application. If
 I aimed to make this project as user-friendly and understandable as possible. If you notice any inconsistencies, have suggestions, or want to contribute, please feel free to reach out.
 
 # Contact
-For questions, feedback, or contribution requests, contact me at: salih.aydogdu.tech@gmail.com
+For questions, feedback, or contribution requests, contact me at: salih.can@aydogdutech.com
