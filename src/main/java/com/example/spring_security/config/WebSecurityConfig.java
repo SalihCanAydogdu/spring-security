@@ -63,7 +63,6 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(auth -> auth
             	.requestMatchers("/api/test/all").permitAll() // public access
             	.requestMatchers("/api/auth/signin").permitAll() // public access
-                .requestMatchers("/api/auth/signin").permitAll() // public access
                 .requestMatchers("/api/auth/signup").permitAll() // public access
                 .requestMatchers("/api/auth/logout").permitAll() // public access
                 .requestMatchers("/api/auth/verify-code").permitAll() // public access
